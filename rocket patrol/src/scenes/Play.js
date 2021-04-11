@@ -8,6 +8,8 @@ class Play extends Phaser.Scene {
         this.load.image("rocket", "assets/rocket.png");
         this.load.image("spaceship", "assets/spaceship.png");
         this.load.image("starfield", "assets/starfield.png");
+        // load explosion sprite sheet
+        this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
     }
 
     create() {
@@ -73,7 +75,8 @@ class Play extends Phaser.Scene {
             borderUISize*4, 
             "spaceship",
             0, 
-            30);
+            30
+            ).setOrigin(0,0);
         
         this.ship2 = new Spaceship(
             this, 
@@ -81,7 +84,8 @@ class Play extends Phaser.Scene {
             borderUISize*5, 
             "spaceship",
             0, 
-            20);
+            20
+            ).setOrigin(0,0);
 
         this.ship3 = new Spaceship(
             this, 
@@ -89,7 +93,14 @@ class Play extends Phaser.Scene {
             borderUISize*6 + borderPadding*4, 
             "spaceship",
             0, 
-            10); 
+            10
+            ).setOrigin(0,0); 
+
+        this.anims.create({
+            key: "explode",
+            frames: this.anims.generateFrameNumbers("explosion", {start: 0, end: 9, first: 0}),
+            frameRate: 30
+        })
 
 
         // defining keys
@@ -108,15 +119,15 @@ class Play extends Phaser.Scene {
         
         if (this.checkCollision(this.p1Rocket, this.ship1)) {
             this.p1Rocket.reset();
-            this.ship1.reset();
+            this.shipExplode(this.ship1);
         }
         if (this.checkCollision(this.p1Rocket, this.ship2)) {
             this.p1Rocket.reset();
-            this.ship2.reset();
+            this.shipExplode(this.ship2);
         }
         if (this.checkCollision(this.p1Rocket, this.ship3)) {
             this.p1Rocket.reset();
-            this.ship3.reset();
+            this.shipExplode(this.ship3);
         }
     }
 
@@ -130,5 +141,19 @@ class Play extends Phaser.Scene {
         } else {
             return false;
         }
+    }
+    
+    shipExplode(ship) {
+        //hide the ship
+        ship.alpha = 0;
+
+        //create explosion sprite
+        let boom = this.add.sprite(ship.x, ship.y, "explosion").setOrigin(0,0);
+        boom.anims.play("explode");
+        boom.on("animationcomplete", () =>{
+            ship.reset();
+            ship.alpha = 1;
+            boom.destroy();
+        })
     }
 }
