@@ -105,5 +105,30 @@ class Play extends Phaser.Scene {
         this.ship1.update();
         this.ship2.update();
         this.ship3.update();
+        
+        if (this.checkCollision(this.p1Rocket, this.ship1)) {
+            this.p1Rocket.reset();
+            this.ship1.reset();
+        }
+        if (this.checkCollision(this.p1Rocket, this.ship2)) {
+            this.p1Rocket.reset();
+            this.ship2.reset();
+        }
+        if (this.checkCollision(this.p1Rocket, this.ship3)) {
+            this.p1Rocket.reset();
+            this.ship3.reset();
+        }
+    }
+
+    checkCollision(rocket, ship) {
+        // simple AABB checking
+        if (rocket.x < ship.x + ship.width && 
+            rocket.x + rocket.width > ship.x && 
+            rocket.y < ship.y + ship.height &&
+            rocket.height + rocket.y > ship. y) {
+                return true;
+        } else {
+            return false;
+        }
     }
 }
