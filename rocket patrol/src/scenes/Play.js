@@ -5,11 +5,11 @@ class Play extends Phaser.Scene {
 
     preload() {
         // load images so they can be used
-        this.load.image("rocket", "assets/rocket.png");
-        this.load.image("spaceship", "assets/spaceship.png");
-        this.load.image("starfield", "assets/starfield.png");
+        this.load.image("rocket", "./assets/rocket.png");
+        this.load.image("spaceship", "./assets/spaceship.png");
+        this.load.image("starfield", "./assets/starfield.png");
         // load explosion sprite sheet
-        this.load.spritesheet('explosion', 'assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
     }
 
     create() {
@@ -108,6 +108,27 @@ class Play extends Phaser.Scene {
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        
+        this.p1Score = 0;
+        
+        //display score
+        let scoreConfig = {
+            fontFamily: "Courier",
+            fontSize: "28px",
+            backgroundColor: '#F3B141',
+            color: "#843605",
+            align: "right",
+            padding: {
+                top: 5,
+                bottom: 5
+            },
+            fixedWidth: 100
+        }
+        this.scoreLeft = this.add.text(
+            borderUISize + borderPadding,
+            borderUISize + borderPadding*2,
+            this.p1Score,
+            scoreConfig);
     }
 
     update() {
@@ -146,7 +167,7 @@ class Play extends Phaser.Scene {
     shipExplode(ship) {
         //hide the ship
         ship.alpha = 0;
-
+        
         //create explosion sprite
         let boom = this.add.sprite(ship.x, ship.y, "explosion").setOrigin(0,0);
         boom.anims.play("explode");
@@ -155,5 +176,7 @@ class Play extends Phaser.Scene {
             ship.alpha = 1;
             boom.destroy();
         })
+        this.p1Score += ship.points;
+        this.scoreLeft.text = this.p1Score;
     }
 }
