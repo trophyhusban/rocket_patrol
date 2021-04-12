@@ -129,14 +129,30 @@ class Play extends Phaser.Scene {
             borderUISize + borderPadding*2,
             this.p1Score,
             scoreConfig);
+
+        // game over flag
+        this.gameOver = false;
+
+        // 60-second play clock
+        scoreConfig.fixedWidth = 0;
+        this.clock = this.time.delayedCall(60000, () => {
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, '(F)ire to Restart', scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
+        }, null, this);
     }
 
     update() {
-        this.starfield.tilePositionX -= 4;
-        this.p1Rocket.update();
-        this.ship1.update();
-        this.ship2.update();
-        this.ship3.update();
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyF)) {
+            this.scene.restart();
+        }
+        if (this.gameOver == false) {
+            this.starfield.tilePositionX -= 4;
+            this.p1Rocket.update();
+            this.ship1.update();
+            this.ship2.update();
+            this.ship3.update();
+        }
         
         if (this.checkCollision(this.p1Rocket, this.ship1)) {
             this.p1Rocket.reset();
@@ -178,5 +194,6 @@ class Play extends Phaser.Scene {
         })
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
+        this.sound.play("sfx_explosion");
     }
 }
