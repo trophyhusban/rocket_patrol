@@ -7,6 +7,8 @@ class Mouth extends Phaser.GameObjects.Sprite {
         this.ai = ai;
         this.direction = -1;
         this.time = 0;
+        this.minX = x;
+        this.maxX = x;
     }
 
     update() {
@@ -21,9 +23,19 @@ class Mouth extends Phaser.GameObjects.Sprite {
         } 
         if (this.ai == "sin") {
             this.time++;
-            this.x = config.width/2 + this.width+ ((config.width-borderUISize*2-this.width)/2) * Math.sin(this.time/100);
-            console.log("time: " + this.time);
-            console.log("x: " + this.x);
+            //this.x = config.width/2 + this.width+ ((config.width-borderUISize*2-this.width)/2) * Math.sin(this.time/100);
+            this.x = Math.sin(this.time/100) * (config.width-borderUISize*2-this.width)/2 + (config.width-borderUISize*2)/2;
+            if (this.minX > this.x) {
+                this.minX = this.x;
+                console.log("min: " + this.minX);
+                console.log("max: " + this.maxX);
+            }
+            if (this.maxX < this.x) {
+                this.maxX = this.x;
+                console.log("min: " + this.minX);
+                console.log("max: " + this.maxX);
+            }
+
         } 
     }
 
